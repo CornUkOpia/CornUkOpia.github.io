@@ -1,0 +1,16 @@
+{
+    "name": "MovieTrackerProgram",
+    "version": "1.0.0",
+    "description": "",
+    "main": "server.js",
+    "scripts": {
+        "start": "node server.js"
+    },
+    "author": "Alex Cornish",
+    "license": "",
+    "dependencies": {
+        "express": "^4.16.4",
+        "js-cookie": "^2.2.0",
+        "request": "^2.88.0"
+    }
+}

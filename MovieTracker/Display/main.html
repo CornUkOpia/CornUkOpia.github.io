@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+<style>
+	.container .button {
+	  background-color: #ffffff;
+	  border: 1px solid black;
+	  color: black;
+	  padding: 3px 50px;
+	  text-align: center;
+	  text-decoration: none;
+	  display: inline-block;
+	  font-size: 16px;
+	  cursor: pointer;
+	  float: none;
+	}
+	.container .button:hover {
+	  background-color: #000000;
+	  color: white;
+	}
+	.container input[type=text]{
+		padding: 3px 1px;
+		width: 250px;
+	}
+	.tab .tabs{
+	  background-color: #ffffff;
+	  border: 1px solid black;
+	  color: black;
+	  padding: 3px 32px;
+	  text-align: center;
+	  text-decoration: none;
+	  display: inline;
+	  font-size: 16px;
+	  cursor: pointer;
+	  float: none;
+	}
+	.tab .tabs:hover {
+	  background-color: #000000;
+	  color: white;
+	}
+
+	.dropdownbutton{
+	  background-color: #ffffff;
+	  border: 1px solid black;
+	  color: black;
+	  padding: 3px 49px;
+	  font-size: 16px;
+	  border: none;
+	}
+	.dropdown {
+	  position: relative;
+	  border: 1px solid black;
+	  display: inline-block;
+	}
+	.dropdown-menu-content {
+	  display: none;
+	  position: absolute;
+	  background-color: #ffffff;
+	  min-width: 160px;
+	  border: 1px solid black;
+	  z-index: 1;
+	}
+	.dropdown-menu-content button {
+	  color: black;
+	  background-color: #ffffff;
+	  border: 1px solid black;
+	  padding: 5px 32px;
+	  text-decoration: none;
+	  display: block;
+	  width: 160px;
+	}
+	.dropdown-menu-content button:hover {
+	  background-color: #000000;
+	  color: white;
+	}
+	.dropdown:hover .dropdown-menu-content {display: block;}
+	.dropdown:hover .dropdownbutton {
+	  background-color: #000000;
+	  color: white;
+	}
+	
+</style>
+<script type="application/javascript" src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+</head>
+<body onload = getURL()>
+    <div class="container">
+		<h1 align="center"> MOVIE TRACKER </h1>
+		<input  placeholder = "Input Film Title here...(Mandatory)" type="text" name="film" id="film" />
+		<input  placeholder = "Input Film Year here... (Optional)" type="text" name="filmYear" id="filmYear" />
+		<button class="button" id="submit" onclick="getFilm()" style="margin-bottom: 30px;">Submit</button>
+		<button class="button" id="mainButton" onclick="getMainMenu()" style="margin-bottom: 30px;">Main Menu</button>
+		<div class="dropdown">
+			<button class="dropdownbutton" type="button" data-toggle="dropdown"> Features </button>
+			<div class="dropdown-menu-content">
+			<button class="tabs" id="favourite" onclick="favouritesList()" >Favourites</button>
+			<button class="tabs" id="watched" onclick="watchedList()" >Watched</button>
+			<button class="tabs" id="watchlist" onclick="watchlistList()" >Watchlist</button>
+			</div>
+		</div>
+		<div id="filmDiv"></div>
+	</div>
+    <script src="js/script.js"></script>
+
+
+</body>
+
+</html>
