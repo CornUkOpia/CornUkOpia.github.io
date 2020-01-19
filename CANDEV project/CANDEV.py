@@ -21,7 +21,15 @@ def buildWindow(dictionary):
     mapOfCanada = str(os.path.dirname(os.path.realpath(__file__))) + "\map.gif"
     mOc = PhotoImage(file=mapOfCanada)
     canvas.pack(expand=YES, fill=BOTH)
+    label1 = tkinter.Label(canvas, text="Show Cities with Climate Action Spending greater than: ")
+    label1.place(x=10, y=780)
+    showCitiesWithCAS = Button(top, text="Submit", command=showCitiesWithCASpending)
+    showCitiesWithCAS.place(x=150,y=800)
+    resetButton = Button(top, text="Reset", command=reset)
+    resetButton.place(x=10,y=850)
     canvas.create_image(583.5,368.5, image=mOc)
+    showCitiesWithLROUH = Button(top, text="Show Cities with Decreasing Unaffordable Housing Rate", command=showCitiesWithDecreasingUnaffordableHousing)
+    showCitiesWithLROUH.place(x=10,y=740)
     canvas.create_rectangle(1170,10, 1600, 710, outline="#000", fill="#FFF")
     x = 845
     y = 660
@@ -65,6 +73,23 @@ def buildWindow(dictionary):
     dictionary = buildCityObject(canvas, "Winnipeg",dictionary,x,y)
     canvas.pack()
     top.mainloop()
+
+def reset():
+    for x in cityDictionary:
+        canvas.itemconfigure(str(x),fill="black")
+
+def showCitiesWithCASpending():
+    for x in cityDictionary:
+        if "Climate Action Spending" in cityDictionary[x]:
+            if int(entryBox.get()) <  int(cityDictionary[x]["Climate Action Spending"]):
+                canvas.itemconfigure(str(x),fill="green")
+
+def showCitiesWithDecreasingUnaffordableHousing():
+    for x in cityDictionary:
+        if "Rate of Unaffordable Housing" in cityDictionary[x]:
+            if cityDictionary[x]["Rate of Unaffordable Housing"]["2006"] >  cityDictionary[x]["Rate of Unaffordable Housing"]["2016"]:
+                canvas.itemconfigure(str(x),fill="red")
+
 
 def buildCityObject(canvas,cityName, dictionary, x, y):
     dictionary = AddAttributeTo(dictionary, cityName, "x", x)
@@ -159,6 +184,8 @@ with open(pathNameOfCityData) as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
     top = tkinter.Tk()
     canvas = Canvas(top, width=1600, height=900)
+    entryBox = tkinter.Entry(canvas)
+    entryBox.place(x=10, y=805)
     cityDictionary = {}
     for row in reader:
         cityDictionary = buildInitialCityObject(row, cityDictionary)
