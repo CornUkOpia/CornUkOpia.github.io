@@ -18,12 +18,11 @@ def buildInitialCityObject(row, dictionary):
     return dictionary
 
 def buildWindow(dictionary):
-    top = tkinter.Tk()
     mapOfCanada = str(os.path.dirname(os.path.realpath(__file__))) + "\map.gif"
     mOc = PhotoImage(file=mapOfCanada)
-    canvas = Canvas(top, width=1200, height=900)
     canvas.pack(expand=YES, fill=BOTH)
     canvas.create_image(583.5,368.5, image=mOc)
+    canvas.create_rectangle(1170,10, 1600, 710, outline="#000", fill="#FFF")
     x = 845
     y = 660
     canvas.create_oval(x,y,x+10,y+10,fill="black",tag="Ottawa")
@@ -36,28 +35,51 @@ def buildWindow(dictionary):
     dictionary = buildCityObject(canvas, "Toronto",dictionary,x,y)
     x = 875
     y = 660
-    canvas.create_oval(x,y,x+10,y+10,fill="black",tag="Montreal")
-    canvas.tag_bind("Montreal",'<ButtonPress-1>',displayCityInfo)
-    cityDictionary = buildCityObject(canvas, "Montreal",dictionary,x,y)
-    print("citydictionary")
-    print(cityDictionary)
+    canvas.create_oval(x,y,x+10,y+10,fill="black",tag="Montréal")
+    canvas.tag_bind("Montréal",'<ButtonPress-1>',displayCityInfo)
+    dictionary = buildCityObject(canvas, "Montréal",dictionary,x,y)
+    x = 990
+    y = 675
+    canvas.create_oval(x,y,x+10,y+10,fill="black",tag="Halifax")
+    canvas.tag_bind("Halifax",'<ButtonPress-1>',displayCityInfo)
+    dictionary = buildCityObject(canvas, "Halifax",dictionary,x,y)
+    x = 255
+    y = 590
+    canvas.create_oval(x,y,x+10,y+10,fill="black",tag="Vancouver")
+    canvas.tag_bind("Vancouver",'<ButtonPress-1>',displayCityInfo)
+    dictionary = buildCityObject(canvas, "Vancouver",dictionary,x,y)
+    x = 350
+    y = 490
+    canvas.create_oval(x,y,x+10,y+10,fill="black",tag="Edmonton")
+    canvas.tag_bind("Edmonton",'<ButtonPress-1>',displayCityInfo)
+    dictionary = buildCityObject(canvas, "Edmonton",dictionary,x,y)
+    x = 340
+    y = 550
+    canvas.create_oval(x,y,x+10,y+10,fill="black",tag="Calgary")
+    canvas.tag_bind("Calgary",'<ButtonPress-1>',displayCityInfo)
+    dictionary = buildCityObject(canvas, "Calgary",dictionary,x,y)
+    x = 580
+    y = 580
+    canvas.create_oval(x,y,x+10,y+10,fill="black",tag="Winnipeg")
+    canvas.tag_bind("Winnipeg",'<ButtonPress-1>',displayCityInfo)
+    dictionary = buildCityObject(canvas, "Winnipeg",dictionary,x,y)
     canvas.pack()
     top.mainloop()
 
 def buildCityObject(canvas,cityName, dictionary, x, y):
     dictionary = AddAttributeTo(dictionary, cityName, "x", x)
     dictionary = AddAttributeTo(dictionary, cityName, "y", y)
-    print(cityName)
-    print(dictionary[cityName])
     return dictionary
 
 def displayCityInfo(event):
-    print("event")
-    print(event)
     currentCity = determineCityFromCoordinates(event.x, event.y)
-    print("Current City:")
-    print(currentCity)
-    print(cityDictionary[currentCity])
+    canvas.create_rectangle(1170,10, 1600, 710, outline="#000", fill="#FFF")
+    canvas.create_text(1200,100,text=currentCity)
+    ycoor = 120
+    for i in cityDictionary[currentCity]:
+        line = i + ": " + str(cityDictionary[currentCity][i])
+        canvas.create_text(1400,ycoor,text=line)
+        ycoor += 20
 
 def determineCityFromCoordinates(x,y):
     for key in cityDictionary:
@@ -76,24 +98,73 @@ def longAndLatToXY(cityObj):
     y = float((mapHeight/180.00) * (90 + cityObj.longitude))
     print(y)
 
-def getUnsuitableHousingData(filename):
+def getUnsuitableHousingData(filename, dictionary):
     pathName = str(os.path.dirname(os.path.realpath(__file__))) + filename
     with open(pathName) as csvfile:
         reader = csv.reader(csvfile, delimiter=',')
         firstRow = next(reader)
-        print("firstrow: " + str(firstRow[5]) + " : " + str(firstRow[22]) + "  " + str(firstRow[23]) + "  " + str(firstRow[24]))
         for row in reader:
-            
-            # row[5]
-            print(str(row[5]) + " : " + str(row[22]) + "  " + str(row[23]) + "  " + str(row[24]))
+            if row[5] in dictionary:
+                unsuitableHousingDict = {
+                    "2006": row[22],
+                    "2011": row[23],
+                    "2016": row[24]
+                }
+                cityDictionary = AddAttributeTo(dictionary,row[5],"Rate of Unaffordable Housing",unsuitableHousingDict)
+    return cityDictionary
 
+def getSchoolAndEnvironmentSpending(filename, dictionary):
+    pathName = str(os.path.dirname(os.path.realpath(__file__))) + filename
+    with open(pathName) as csvfile:
+        reader = csv.reader(csvfile, delimiter=',')
+        firstRow = next(reader)
+        #print("firstrow: " + str(firstRow[5]) + " : " + str(firstRow[22]) + "  " + str(firstRow[23]) + "  " + str(firstRow[24]))
+        for row in reader:
+            if row[0] in dictionary:
+                cityDictionary = AddAttributeTo(dictionary,row[0],firstRow[1],row[1])
+                cityDictionary = AddAttributeTo(dictionary,row[0],firstRow[2],row[2])
+    return cityDictionary    
+
+def checkIfInt(s):
+    try: 
+        int(s)
+        return True
+    except ValueError:
+        return False
+
+
+def getClimateActionSpending(filename, dictionary):
+    pathName = str(os.path.dirname(os.path.realpath(__file__))) + filename
+    with open(pathName) as csvfile:
+        reader = csv.reader(csvfile, delimiter=',')
+        firstRow = next(reader)
+        #print("firstrow: " + str(firstRow[5]) + " : " + str(firstRow[22]) + "  " + str(firstRow[23]) + "  " + str(firstRow[24]))
+        for row in reader:
+            if row[22] in dictionary:
+                value = str(row[14]).replace(" ","")
+                value = value.replace("$","").split(".")
+                value = value[0].replace(",","")
+                if checkIfInt(value) == True:
+                    if "Climate Action Spending" in dictionary[row[22]]:
+                        totalSpending = dictionary[row[22]]["Climate Action Spending"]
+                        dictionary[row[22]]["Climate Action Spending"] = int(totalSpending) + int(value)
+                    else:
+                        dictionary = AddAttributeTo(dictionary,row[22],"Climate Action Spending",int(value))
+    print(dictionary)
+    cityDictionary = dictionary
+    return cityDictionary
 
 pathNameOfCityData = str(os.path.dirname(os.path.realpath(__file__))) + "\CanadianCityData.csv"
 with open(pathNameOfCityData) as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
+    top = tkinter.Tk()
+    canvas = Canvas(top, width=1600, height=900)
     cityDictionary = {}
     for row in reader:
         cityDictionary = buildInitialCityObject(row, cityDictionary)
-    getUnsuitableHousingData("\CMA_CA_RMR_AR.csv")
-    #buildWindow(cityDictionary)   
+    cityDictionary = getUnsuitableHousingData("\CMA_CA_RMR_AR.csv",cityDictionary)
+    cityDictionary = getSchoolAndEnvironmentSpending("\CANDEVEconAndEducationSpending.csv",cityDictionary)
+    cityDictionary = getClimateActionSpending("\climateActionSpending.csv",cityDictionary)
+    #print(cityDictionary)
+    buildWindow(cityDictionary)   
 
